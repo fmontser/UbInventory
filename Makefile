@@ -18,11 +18,7 @@ bash:
 clean:
 	@echo "Cleaning docker..."
 	@docker compose -f $(COMPOSE_FILE) down --volumes --remove-orphans
-	
-fclean: clean
-	@echo "Force cleaning whole project..."
-	@docker system prune -a -f
 
-re: fclean build up
+re: build up
 
-.PHONY: up down bash clean fclean re
+.PHONY: up down bash clean re
