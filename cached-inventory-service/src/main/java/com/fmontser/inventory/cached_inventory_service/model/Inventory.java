@@ -1,4 +1,4 @@
-package com.fmontser.inventory.cached_inventory_service.datamodel_layer;
+package com.fmontser.inventory.cached_inventory_service.model;
 
 import java.util.List;
 import org.springframework.data.annotation.Id;
