@@ -1,4 +1,4 @@
-package com.fmontser.inventory.cached_inventory_service.datamodel_layer;
+package com.fmontser.inventory.cached_inventory_service.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
