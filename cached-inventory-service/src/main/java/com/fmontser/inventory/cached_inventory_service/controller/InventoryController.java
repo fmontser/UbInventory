@@ -10,12 +10,14 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping(("/api/v1/inventories"))
@@ -23,15 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public class InventoryController {
 	private final InventoryService inventoryService;
-
-	@GetMapping("/{playerId}")
-	public ResponseEntity<Inventory> getInventoryByPlayerId(@PathVariable String playerId) {
-		Optional<Inventory> response = inventoryService.getInventoryByPlayerId(playerId);
-		if (response.isPresent())
-			return (ResponseEntity.ok(response.get()));
-		else
-			return (ResponseEntity.notFound().build());
-	}
 
 	@PostMapping()
 	public ResponseEntity<Inventory> createInventory(@RequestBody CreateInventoryRequest request) {
@@ -43,5 +36,25 @@ public class InventoryController {
 			return (ResponseEntity.status(HttpStatus.CONFLICT).build());
 		}
 	}
+
+	@GetMapping("/{playerId}")
+	public ResponseEntity<Inventory> getInventoryByPlayerId(@PathVariable String playerId) {
+		Optional<Inventory> inventory = inventoryService.getInventoryByPlayerId(playerId);
+		if (inventory.isPresent())
+			return (ResponseEntity.ok(inventory.get()));
+		else
+			return (ResponseEntity.notFound().build());
+	}
+
+	@PutMapping("/{playerId}")
+	public ResponseEntity<Inventory> updateInventory(@PathVariable String playerId, @RequestBody CreateInventoryRequest request) {
+		Optional<Inventory> inventory = inventoryService.updateInventory(playerId, request);
+		if (inventory.isPresent())
+			return (ResponseEntity.ok(inventory.get()));
+		else
+			return (ResponseEntity.notFound().build());
+	}
+
+
 
 }
