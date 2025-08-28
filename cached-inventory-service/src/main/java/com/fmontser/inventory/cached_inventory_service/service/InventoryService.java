@@ -14,12 +14,6 @@ import lombok.RequiredArgsConstructor;
 public class InventoryService {
 	private final InventoryRepository inventoryRepository;
 
-	//TODO logic...
-	public Optional <Inventory> getInventoryByPlayerId(String playerId) {
-		System.out.println("Log: Searching player's inventory on mongoDB");
-		return (inventoryRepository.findByPlayerId(playerId));
-	}
-
 	public Inventory createInventory(CreateInventoryRequest request) throws Exception {
 		System.out.println("Log: Creating " + request.getPlayerId() +" inventory on mongoDB");
 
@@ -31,6 +25,24 @@ public class InventoryService {
 			newInventory.setPlayerId(request.getPlayerId());
 			newInventory.setItems(request.getItems());
 			return (inventoryRepository.save((newInventory)));
+		}
+	}
+
+	public Optional <Inventory> getInventoryByPlayerId(String playerId) {
+		System.out.println("Log: Searching player's inventory on mongoDB");
+		return (inventoryRepository.findByPlayerId(playerId));
+	}
+
+	public Optional<Inventory> updateInventory(String playerId, CreateInventoryRequest request) {
+		Optional<Inventory> existingInventory =inventoryRepository.findByPlayerId(request.getPlayerId());
+
+		if (existingInventory.isEmpty()) {
+			System.out.println("Log: " + request.getPlayerId() + " inventory is empty, nothing to update");
+			return (Optional.empty());
+		} else {
+			Inventory updateInventory = existingInventory.get();
+			updateInventory.setItems(request.getItems());
+			return (Optional.of(inventoryRepository.save(updateInventory)));
 		}
 	}
 }
