@@ -9,5 +9,4 @@ public class CachedInventoryServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CachedInventoryServiceApplication.class, args);
 	}
-
 }
