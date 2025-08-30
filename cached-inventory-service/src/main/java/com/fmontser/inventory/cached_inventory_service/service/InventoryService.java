@@ -2,6 +2,7 @@ package com.fmontser.inventory.cached_inventory_service.service;
 
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import com.fmontser.inventory.cached_inventory_service.model.Inventory;
 import com.fmontser.inventory.cached_inventory_service.repository.InventoryRepository;
@@ -9,10 +10,12 @@ import com.fmontser.inventory.cached_inventory_service.dto.CreateInventoryReques
 
 import lombok.RequiredArgsConstructor;
 
+
 @Service
 @RequiredArgsConstructor
 public class InventoryService {
 	private final InventoryRepository inventoryRepository;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	public Inventory createInventory(CreateInventoryRequest request) throws Exception {
 		System.out.println("Log: Creating " + request.getPlayerId() +" inventory on mongoDB");
@@ -29,8 +32,31 @@ public class InventoryService {
 	}
 
 	public Optional <Inventory> getInventoryByPlayerId(String playerId) {
-		System.out.println("Log: Searching player's inventory on mongoDB");
-		return (inventoryRepository.findByPlayerId(playerId));
+		System.out.println("Log: Searching player's inventory");
+
+		final String cacheKey = "inventory::" + playerId;
+
+		try {
+			Inventory cachedInventory = (Inventory) redisTemplate.opsForValue().get(cacheKey);
+
+			if (cachedInventory != null) {
+				System.out.println("Log: found cached inventory");
+				return (Optional.of(cachedInventory));
+			}
+		} catch (Exception e) {
+			System.err.println("Error: cache error: " + e.getMessage());
+		}
+
+		Optional<Inventory> nonCachedInventory = inventoryRepository.findByPlayerId(playerId);
+		try {
+			if (nonCachedInventory.isPresent()) {
+				System.out.println("Log: found inventory, copying to cache");
+				redisTemplate.opsForValue().set(cacheKey, nonCachedInventory.get());
+			}
+		} catch (Exception e) {
+			System.err.println("Error: cache error: " + e.getMessage());
+		}
+		return (nonCachedInventory);
 	}
 
 	public Optional<Inventory> updateInventory(String playerId, CreateInventoryRequest request) {
