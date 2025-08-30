@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 public class InventoryController {
 	private final InventoryService inventoryService;
 
+	//TODO mover las comprobaciones a la capa de servicio (hay redundancia...)
+
 	@PostMapping()
 	public ResponseEntity<Inventory> createInventory(@RequestBody CreateInventoryRequest request) {
 		try {
