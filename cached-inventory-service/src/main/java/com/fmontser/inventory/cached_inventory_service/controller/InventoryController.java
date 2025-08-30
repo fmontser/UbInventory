@@ -10,14 +10,14 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.data.mongodb.core.aggregation.ArrayOperators.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 @RequestMapping(("/api/v1/inventories"))
@@ -55,6 +55,13 @@ public class InventoryController {
 			return (ResponseEntity.notFound().build());
 	}
 
-
+	@DeleteMapping("/{playerId}")
+	public ResponseEntity<Void> deleteInventory(@PathVariable String playerId) {
+		boolean isDeleted = inventoryService.deleteInventoryByPlayerId(playerId);
+		if (isDeleted)
+			return (ResponseEntity.noContent().build());
+		else
+			return (ResponseEntity.notFound().build());
+	}
 
 }

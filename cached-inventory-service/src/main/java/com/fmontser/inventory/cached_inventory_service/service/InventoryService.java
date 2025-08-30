@@ -45,4 +45,18 @@ public class InventoryService {
 			return (Optional.of(inventoryRepository.save(updateInventory)));
 		}
 	}
+
+
+	public boolean deleteInventoryByPlayerId(String playerId) {
+		Optional<Inventory> existingInventory = inventoryRepository.findByPlayerId(playerId);
+		
+		if (existingInventory.isPresent()) {
+			inventoryRepository.delete(existingInventory.get());
+			System.out.println("Log: " + playerId + " inventory has been deleted");
+			return (true);
+		} else {
+			System.out.println("Log: " + playerId + " inventory to be deleted not found");
+			return (false);
+		}
+	}
 }
