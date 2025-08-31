@@ -1,12 +1,17 @@
-MAKEFLAGS 		+= --silent
+MAKEFLAGS		+= --silent
 COMPOSE_FILE	:= docker-compose.yml
+APP_DIR			:= cached-inventory-service
+
+all: up
+	@echo "Launching inventory service..."
+	@cd $(APP_DIR) && ./mvnw spring-boot:run
 
 up: down
-	@echo "Setting services online..."
+	@echo "Setting docker services online..."
 	@docker compose -f $(COMPOSE_FILE) up -d
 
 down:
-	@echo "Setting services offline..."
+	@echo "Setting docker services offline..."
 	@docker compose -f $(COMPOSE_FILE) down
 
 logs:
@@ -21,4 +26,4 @@ clean:
 
 re: build up
 
-.PHONY: up down bash clean re
+.PHONY: all up down bash clean re
